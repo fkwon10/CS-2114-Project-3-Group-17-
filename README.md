@@ -73,7 +73,7 @@ Instructions based on rubric:
 | :--- | :--- | :--- |
 | `Main.java` | Francis Kwon | Wrote the entry-point wiring Model, View, and Controller for application execution.|
 | `QueueNode.java` | Francis Kwon | Wrote node implementation with generic data holder and next pointer reference. |
-| `QueueObserver.java` | | |
+| `QueueObserver.java` | Francis Kwon |Defined decoupled observer interface contract (`update` and `showError`) for push notifications. |
 | `QueueStatusDTO.java` | Francis Kwon | Wrote immutable DTO class carrying metrics across Model/View boundary. |
 | `SinglyLinkedQueue.java` | Francis Kwon | Co-wrote custom singly linked FIFO queue; implemented head/tail pointer mechanics and O(1) operations. |
 | `TicketingModel.java` | | |
