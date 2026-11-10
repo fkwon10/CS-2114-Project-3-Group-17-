@@ -75,7 +75,7 @@ Instructions based on rubric:
 | `QueueNode.java` | Francis Kwon | Wrote node implementation with generic data holder and next pointer reference. |
 | `QueueObserver.java` | Francis Kwon |Defined decoupled observer interface contract (`update` and `showError`) for push notifications. |
 | `QueueStatusDTO.java` | Francis Kwon | Wrote immutable DTO class carrying metrics across Model/View boundary. |
-| `SinglyLinkedQueue.java` | Francis Kwon | Co-wrote custom singly linked FIFO queue; implemented head/tail pointer mechanics and O(1) operations. |
+| `SinglyLinkedQueue.java` | Francis Kwon | Wrote custom singly linked FIFO queue; implemented head/tail pointer mechanics and O(1) operations. |
 | `TicketingModel.java` | | |
 | `FanTicketRequest.java` | | |
 | `QueueView.java` | | |
