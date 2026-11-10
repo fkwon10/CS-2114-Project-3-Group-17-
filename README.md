@@ -76,13 +76,13 @@ Instructions based on rubric:
 | `QueueObserver.java` | Francis Kwon |Defined decoupled observer interface contract (`update` and `showError`) for push notifications. |
 | `QueueStatusDTO.java` | Francis Kwon | Wrote immutable DTO class carrying metrics across Model/View boundary. |
 | `SinglyLinkedQueue.java` | Francis Kwon | Wrote custom singly linked FIFO queue; implemented head/tail pointer mechanics and O(1) operations. |
-| `TicketingModel.java` | | |
+| `TicketingModel.java` | Kathy | |
 | `FanTicketRequest.java` | | |
 | `QueueView.java` | | |
 | `ConsoleQueueView.java` | | |
 | `TicketingController.java` | | |
-| `SinglyLinkedQueueTest.java` | | |
-| `TicketingModelTest.java` | | |
+| `SinglyLinkedQueueTest.java` | Kathy | |
+| `TicketingModelTest.java` | Kathy | |
 
 ### GenAI Usage Note
 <!-- Describe specifically how Generative AI tools were used across the project, or explicitly write that Generative AI was not used. -->
