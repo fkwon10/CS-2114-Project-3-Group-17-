@@ -10,14 +10,14 @@ public class SinglyLinkedQueueTest
     private SinglyLinkedQueue queue;
 
     @BeforeEach
-    void setUp()
+    public void setUp()
     {
         queue = new SinglyLinkedQueue<>();
     }
 
 
     @Test
-    void testEnqueue()
+    public void testEnqueue()
     {
         IllegalArgumentException e = null;
         try
@@ -35,7 +35,7 @@ public class SinglyLinkedQueueTest
 
 
     @Test
-    void testDequeue()
+    public void testDequeue()
     {
         NoSuchElementException e = null;
         try
@@ -56,7 +56,7 @@ public class SinglyLinkedQueueTest
 
 
     @Test
-    void testPeek()
+    public void testPeek()
     {
         NoSuchElementException e = null;
         try
@@ -74,7 +74,7 @@ public class SinglyLinkedQueueTest
 
 
     @Test
-    void testIsEmpty()
+    public void testIsEmpty()
     {
         assertTrue(queue.isEmpty());
         queue.enqueue("testA");
@@ -83,7 +83,7 @@ public class SinglyLinkedQueueTest
 
 
     @Test
-    void testSize()
+    public void testSize()
     {
         queue.enqueue("test");
         assertEquals(1, queue.size());
