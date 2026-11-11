@@ -2,10 +2,7 @@ package encore.view;
 
 public class TicketingModel
 {
-    //~ Fields ................................................................
-
-    //~ Constructors ..........................................................
-
-    //~Public  Methods ........................................................
+    //im scared but i got this... i think
+    
 
 }
