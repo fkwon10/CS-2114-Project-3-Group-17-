@@ -76,13 +76,13 @@ Instructions based on rubric:
 | `QueueObserver.java` | Francis Kwon |Defined decoupled observer interface contract (`update` and `showError`) for push notifications. |
 | `QueueStatusDTO.java` | Francis Kwon | Wrote immutable DTO class carrying metrics across Model/View boundary. |
 | `SinglyLinkedQueue.java` | Francis Kwon | Wrote custom singly linked FIFO queue; implemented head/tail pointer mechanics and O(1) operations. |
-| `TicketingModel.java` | Kathryn Dedrick | |
+| `TicketingModel.java` | Kathryn Dedrick | Wrote ticketing methods to validate the ability to use a service view model.|
 | `FanTicketRequest.java` | Rafik Khismatov | Wrote immutable request record storing a fan's name, ticket quantity, and join timestamp; added constructor validation, equals/hashCode, and toString. |
 | `QueueView.java` | Rafik Khismatov  | Defined view interface contract for menu, input prompts, checkout decisions, receipts, and sold-out notices using only primitives and Strings so the view stays decoupled from the model. GenAI-assisted. |
 | `ConsoleQueueView.java` | Sebastian Pacheco | |
 | `TicketingController.java` | Sebastian Pacheco | |
 | `SinglyLinkedQueueTest.java` | Kathryn Dedrick | Wrote test cases for the SinglyLinkedQueue class to assert all functions work without print statements/ use of a view |
-| `TicketingModelTest.java` | Kathryn Dedrick | Wrote test cases for the TicketingModel class to assert all functions work without print statements/ use of a view |
+| `TicketingModelTest.java` | Kathryn Dedrick | Wrote test cases for the TicketingModel class to assert all functions work without print statements/ use of a view. Gen-AI assisted |
 
 ### GenAI Usage Note
 <!-- Describe specifically how Generative AI tools were used across the project, or explicitly write that Generative AI was not used. -->
