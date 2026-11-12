@@ -77,8 +77,8 @@ Instructions based on rubric:
 | `QueueStatusDTO.java` | Francis Kwon | Wrote immutable DTO class carrying metrics across Model/View boundary. |
 | `SinglyLinkedQueue.java` | Francis Kwon | Wrote custom singly linked FIFO queue; implemented head/tail pointer mechanics and O(1) operations. |
 | `TicketingModel.java` | Kathryn Dedrick | |
-| `FanTicketRequest.java` | | |
-| `QueueView.java` | | |
+| `FanTicketRequest.java` | Rafik Khismatov | |
+| `QueueView.java` | Rafik Khismatov  | |
 | `ConsoleQueueView.java` | | |
 | `TicketingController.java` | | |
 | `SinglyLinkedQueueTest.java` | Kathryn Dedrick | Wrote test cases for the SinglyLinkedQueue class to assert all functions work without print statements/ use of a view |
