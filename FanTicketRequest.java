@@ -16,6 +16,9 @@ public final class FanTicketRequest {
 
     /**
      * Creates a request stamped with the current system time.
+     *
+     * @param customerName the fan's name
+     * @param quantity     the number of tickets requested
      */
     public FanTicketRequest(String customerName, int quantity) {
         this(customerName, quantity, System.currentTimeMillis());
@@ -23,19 +26,32 @@ public final class FanTicketRequest {
 
     /**
      * Creates a request with an explicit join timestamp.
+     *
+     * @param customerName   the fan's name
+     * @param quantity       the number of tickets requested
+     * @param joinedAtMillis the time the fan joined the line, in epoch
+     *                       milliseconds
+     * @throws IllegalArgumentException if the name is blank or the quantity
+     *                                  is not between 1 and 4
      */
-    public FanTicketRequest(String customerName, int quantity, long joinedAtMillis) {
+    public FanTicketRequest(String customerName, int quantity,
+        long joinedAtMillis) {
         if (customerName == null || customerName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Customer name cannot be blank.");
+            throw new IllegalArgumentException(
+                "Customer name cannot be blank.");
         }
         if (quantity < 1 || quantity > 4) {
-            throw new IllegalArgumentException("Quantity must be between 1 and 4.");
+            throw new IllegalArgumentException(
+                "Quantity must be between 1 and 4.");
         }
         this.customerName = customerName.trim();
         this.quantity = quantity;
         this.joinedAtMillis = joinedAtMillis;
     }
 
+    /**
+     * @return the fan's name
+     */
     public String getCustomerName() {
         return customerName;
     }
