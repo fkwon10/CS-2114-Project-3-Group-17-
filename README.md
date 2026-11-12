@@ -79,8 +79,8 @@ Instructions based on rubric:
 | `TicketingModel.java` | Kathryn Dedrick | |
 | `FanTicketRequest.java` | Rafik Khismatov | |
 | `QueueView.java` | Rafik Khismatov  | |
-| `ConsoleQueueView.java` | | |
-| `TicketingController.java` | | |
+| `ConsoleQueueView.java` | Sebastian Pacheco | |
+| `TicketingController.java` | Sebastian Pacheco | |
 | `SinglyLinkedQueueTest.java` | Kathryn Dedrick | Wrote test cases for the SinglyLinkedQueue class to assert all functions work without print statements/ use of a view |
 | `TicketingModelTest.java` | Kathryn Dedrick | Wrote test cases for the TicketingModel class to assert all functions work without print statements/ use of a view |
 
