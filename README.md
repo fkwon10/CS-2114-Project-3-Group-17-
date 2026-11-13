@@ -14,18 +14,18 @@ Instructions based on rubric:
 -->
 
 ### Spec Deviations & What Prompted Them
-* **Spec vs. Implementation:** Additional defining methods in various classes, including TicketingModel, FanTicketRequest, and a few others gaining getter and setter methods not previously listed.
-* **Prompt/Reason:** We realized as we were writing and debugging it was necessary to have these methods for access in our view and model, and we added test cases as needed to each additional method. Overall it went smoother after we implemented the small quality of life methods.
+* **Spec vs. Implementation:** During implementation, we introduced additional getter and setter methods in several classes, including TicketingModel and FanTicketRequest, that were not explicitly included in our original specification.
+* **Prompt/Reason:** As we developed the model and connected it to the view, we found that additional access methods were necessary to maintain encapsulation while allowing the appropriate classes to retrieve and update information. We also expanded our test coverage to account for these methods. These additions improved communication between components without requiring us to compromise the overall architecture of the MVP.
 
 ### Model Independence
-* The model does run without its view, we were able to verify each with the jUnit tests.
+* The model does not directly depend on the view or require it to execute its core queue operations. We verified this separation through our JUnit tests, which exercise the model independently of the interface. Communication between the model and view is handled through the established interfaces and controller structure.
 
 ### Unknowns & Scope Status
 * **Figured Out:** We figured out queue encapsulation with our singlyLinkedQueue class, it holds our basic methods and our 'service window' validates all the functions running without node leakage. The architecture we landed on for our MVP runs without issue in a logical manner and has created a viable solution to our prompt. Our questions with jUnit were resolved as we fleshed out our methods and added additional helper methods like getters or setters.
 * **Still Open:** Object persistence, this becomes an issue as we begin to take on our first stretch goal, and thereafter. We will need further discussions on the best plan of action to hold data outside of our running program.
 
 ### Current Limitations / Known Issues
-* None at this time, more testing will be required. In the first 15 minutes of our MVP running, we attempted to hit every error we could; the program resumed smoothly each time.
+* The current MVP has no known blocking issues. During our initial testing, we deliberately attempted to trigger a variety of invalid-input and error conditions. The program recovered appropriately and continued operating without crashing. However, additional testing will be necessary as we expand the program's functionality. Object persistence also remains outside the scope of the current MVP and will need to be addressed as we implement future features.
 
 ---
 
@@ -43,10 +43,13 @@ Instructions based on rubric:
 -->
 
 ### Remaining Work for MVP (In Order)
-Our MVP is complete. 
-We should move on to implementing our stretch goals.
-1. Definitions and classes [Francis and Kathy]
-2. Implementations and testing [Sebastian and Rafik]
+Our MVP is complete, and no additional MVP functionality is currently outstanding. Our next priority is implementing the committed stretch goals.
+
+Define the membership tier structure and establish the necessary classes and method signatures. [Francis and Kathy]
+
+Implement the membership tier functionality, integrate it into the existing queue system, and develop corresponding tests. [Sebastian and Rafik]
+
+Evaluate the implementation and determine whether merch pre-orders should be developed before or after membership tiers.
 
 
 ### Future Non-Trivial Feature (Post-MVP)
@@ -61,14 +64,18 @@ We should move on to implementing our stretch goals.
 ### New Tests Needed
 * getTier() -- get's the fan's tier (Good: returns tier ; bad: throws on an invalid fan)
 * isGoldTier() -- boolean to assert which queue the fan is added to (Good: returns true on a gold fan ; Bad: throws on an invalid fan)
-* isSilverTier() -- Same as above
-* isClassicTier() -- Same as above
+* isSilverTier() -- Same as above for silver
+* isClassicTier() -- Same as above for classic
 * enqueueGold() -- adds a fan to the gold queue (Good: adds a fan ; Bad: throws on a null or invalid input or mismatch tier type)
 * dequeueGold() -- removes a fan from the gold queue (Good: removes a fan ; Bad: throws on an empty queue or invalid input or mismatch tier) 
-* enqueueSilver() -- Same as above
-* dequeueSilver() -- Same as above
-* enqueueClassic() -- Same as above
-* dequeueClassive() -- Same as above
+* enqueueSilver() -- Same as above for silver
+* dequeueSilver() -- Same as above for silver
+* enqueueClassic() -- Same as above for classic
+* dequeueClassic() -- Same as above for classic
+* stepQueue() with all three tiers populated.
+* stepQueue() with only one tier populated.
+* stepQueue() with two tiers populated.
+* Verify that the correct fan enters the purchase window according to your intended priority rules.
 
 ---
 
@@ -98,4 +105,4 @@ Instructions based on rubric:
 
 ### GenAI Usage Note
 <!-- Describe specifically how Generative AI tools were used across the project, or explicitly write that Generative AI was not used. -->
-GenAI was used to assert the README followed the rubric. GenAI was used by several group members to organize our own handwritten code into a cleaner and more efficient program. 
+GenAI was used to review the README against the project rubric and identify areas requiring clarification or additional detail. Several group members also used GenAI as an organizational and refinement tool when translating handwritten code into a cleaner implementation. All generated suggestions were reviewed and incorporated as appropriate by the group members responsible for the relevant code.
