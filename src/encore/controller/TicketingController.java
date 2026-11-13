@@ -19,10 +19,13 @@ public class TicketingController {
     public void run() {
         boolean running = true;
         while (running) {
-            int choice = view.showMenu();
+            view.showMenu();
+            int choice = view.readMenuChoice();
             switch (choice) {
                 case 1:
-                    onJoinRequested(view.readName(), view.readQuantity());
+                    onJoinRequested(
+                        view.promptCustomerName(),
+                        view.promptTicketQuantity());
                     break;
                 case 2:
                     onStepLineRequested();
@@ -59,7 +62,8 @@ public class TicketingController {
     public void onStepLineRequested() {
         try {
             FanTicketRequest active = model.stepQueue();
-            view.showMessage("Now checking out: " + active.getCustomerName());
+            view.showActiveCheckout(
+                active.getCustomerName(), active.getQuantity());
         } catch (IllegalStateException e) {
             view.showError(e.getMessage());
         }
@@ -81,26 +85,37 @@ public class TicketingController {
             }
             if (view.promptAcceptPartial(active.getQuantity(), remaining)) {
                 model.confirmPartialPurchase(remaining);
-                view.showReceipt(active.getCustomerName(), remaining);
+                view.showReceipt(
+                    active.getCustomerName(),
+                    remaining,
+                    model.getTicketsRemaining());
             } else {
                 model.cancelActiveTransaction();
-                view.showMessage("Partial offer declined. Checkout canceled.");
+                view.showCancellation(active.getCustomerName());
             }
             return;
         }
 
         try {
             model.confirmPurchase();
-            view.showReceipt(active.getCustomerName(), active.getQuantity());
+            view.showReceipt(
+                active.getCustomerName(),
+                active.getQuantity(),
+                model.getTicketsRemaining());
         } catch (IllegalStateException e) {
             view.showError(e.getMessage());
         }
     }
 
     public void onCheckoutDeclined() {
+        FanTicketRequest active = model.getActiveRequest();
         try {
             model.cancelActiveTransaction();
-            view.showMessage("Checkout canceled.");
+            if (active != null) {
+                view.showCancellation(active.getCustomerName());
+            } else {
+                view.showMessage("Checkout canceled.");
+            }
         } catch (IllegalStateException e) {
             view.showError(e.getMessage());
         }

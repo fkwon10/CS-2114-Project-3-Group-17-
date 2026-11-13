@@ -47,6 +47,7 @@ public class TicketingModelTest {
         model.enqueueFan("John", 2);
 
         assertNotNull(stub.lastStatus);
+        assertNull(stub.lastError);
         assertEquals(1, stub.lastStatus.getQueueLength());
         assertEquals("John", stub.lastStatus.getFrontCustomerName());
         assertEquals(10, stub.lastStatus.getTicketsRemaining());
