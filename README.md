@@ -14,18 +14,18 @@ Instructions based on rubric:
 -->
 
 ### Spec Deviations & What Prompted Them
-* **Spec vs. Implementation:** 
-* **Prompt/Reason:** 
+* **Spec vs. Implementation:** Additional defining methods in various classes, including TicketingModel, FanTicketRequest, and a few others gaining getter and setter methods not previously listed.
+* **Prompt/Reason:** We realized as we were writing and debugging it was necessary to have these methods for access in our view and model, and we added test cases as needed to each additional method. Overall it went smoother after we implemented the small quality of life methods.
 
 ### Model Independence
-* 
+* The model does run without its view, we were able to verify each with the jUnit tests.
 
 ### Unknowns & Scope Status
-* **Figured Out:** 
-* **Still Open:** 
+* **Figured Out:** We figured out queue encapsulation with our singlyLinkedQueue class, it holds our basic methods and our 'service window' validates all the functions running without node leakage. The architecture we landed on for our MVP runs without issue in a logical manner and has created a viable solution to our prompt. Our questions with jUnit were resolved as we fleshed out our methods and added additional helper methods like getters or setters.
+* **Still Open:** Object persistence, this becomes an issue as we begin to take on our first stretch goal, and thereafter. We will need further discussions on the best plan of action to hold data outside of our running program.
 
 ### Current Limitations / Known Issues
-* 
+* None at this time, more testing will be required. In the first 15 minutes of our MVP running, we attempted to hit every error we could; the program resumed smoothly each time.
 
 ---
 
@@ -43,20 +43,32 @@ Instructions based on rubric:
 -->
 
 ### Remaining Work for MVP (In Order)
-1. **[Task Name]** - Owner: `[Name]`
-2. **[Task Name]** - Owner: `[Name]`
+Our MVP is complete. 
+We should move on to implementing our stretch goals.
+1. Definitions and classes [Francis and Kathy]
+2. Implementations and testing [Sebastian and Rafik]
+
 
 ### Future Non-Trivial Feature (Post-MVP)
-* **Feature Description:** 
-* **Affected Classes & Specific Methods:** 
-* **Classes That Should Not Change:** 
+* **Feature Description:** We planned to implement three membership tiers, gold, silver and classic offering different perks in our main ticket model queue.
+* **Affected Classes & Specific Methods:** Our view classes, queue system, and most importantly our stepQueue method would be the most impacted. Our plan was to create several different queues resulting in a different rotation into the purchase window and a new series of checks within the method. Another affected class would be the FanTicketRequest because it would need to take the tier into consideration during it's constructor.
+* **Classes That Should Not Change:** The SinglyLinkedQueue will remain the same as the basic function for our queue.
 
 ### Stretch Goals
-* **Committed:** 
-* **Dropped:** 
+* **Committed:** Membership Tiers, and Merch Pre-order. The merch pre-order may be implemented after tiers or before, depending on how the first implementation of stretch goals runs.
+* **Dropped:** Seat Upgrade Roulette
 
 ### New Tests Needed
-* 
+* getTier() -- get's the fan's tier (Good: returns tier ; bad: throws on an invalid fan)
+* isGoldTier() -- boolean to assert which queue the fan is added to (Good: returns true on a gold fan ; Bad: throws on an invalid fan)
+* isSilverTier() -- Same as above
+* isClassicTier() -- Same as above
+* enqueueGold() -- adds a fan to the gold queue (Good: adds a fan ; Bad: throws on a null or invalid input or mismatch tier type)
+* dequeueGold() -- removes a fan from the gold queue (Good: removes a fan ; Bad: throws on an empty queue or invalid input or mismatch tier) 
+* enqueueSilver() -- Same as above
+* dequeueSilver() -- Same as above
+* enqueueClassic() -- Same as above
+* dequeueClassive() -- Same as above
 
 ---
 
