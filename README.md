@@ -98,8 +98,8 @@ Instructions based on rubric:
 | `TicketingModel.java` | Kathryn Dedrick | Wrote ticketing methods to validate the ability to use a service view model.|
 | `FanTicketRequest.java` | Rafik Khismatov | Wrote immutable request record storing a fan's name, ticket quantity, and join timestamp; added constructor validation, equals/hashCode, and toString. |
 | `QueueView.java` | Rafik Khismatov  | Defined view interface contract for menu, input prompts, checkout decisions, receipts, and sold-out notices using only primitives and Strings so the view stays decoupled from the model. GenAI-assisted. |
-| `ConsoleQueueView.java` | Sebastian Pacheco | |
-| `TicketingController.java` | Sebastian Pacheco | |
+| `ConsoleQueueView.java` | Sebastian Pacheco | Wrote console-based view implementation to display menus, queue status, receipts, and error messages; implemented user input handling and validation. |
+| `TicketingController.java` | Sebastian Pacheco | Wrote controller to coordinate user interactions between the view and model; implemented queue entry, line advancement, purchase confirmation, cancellation, and exception handling.|
 | `SinglyLinkedQueueTest.java` | Kathryn Dedrick | Wrote test cases for the SinglyLinkedQueue class to assert all functions work without print statements/ use of a view |
 | `TicketingModelTest.java` | Kathryn Dedrick | Wrote test cases for the TicketingModel class to assert all functions work without print statements/ use of a view. Gen-AI assisted |
 
