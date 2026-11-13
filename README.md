@@ -98,3 +98,4 @@ Instructions based on rubric:
 
 ### GenAI Usage Note
 <!-- Describe specifically how Generative AI tools were used across the project, or explicitly write that Generative AI was not used. -->
+GenAI was used to assert the README followed the rubric. GenAI was used by several group members to organize our own handwritten code into a cleaner and more efficient program. 
