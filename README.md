@@ -59,8 +59,8 @@ java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.J
 
 ### Remaining Work for Final Build (In Order)
 1. **Refactor Tiers to a `MembershipTier` Enum & Support Mid-Line `GOLD` Priority:** Replace `String` tier checks in `TicketingModel` with a `MembershipTier` enum and allow `GOLD` members to jump ahead of non-`GOLD` fans when joining a non-empty queue. — **Owner:** `Kathryn Dedrick`
-2. **Implement Merch Pre-Order Stretch Goal:** Add optional concert merchandise bundle selection during checkout (`FanTicketRequest` / `TicketingModel`) and display merch items on the receipt. — **Owner:** `Rafik Khismatov`
-3. **Trigger Automated Sold-Out Broadcast & Controller Tests:** Invoke `view.showSoldOut(model.getQueueSize())` automatically in `TicketingController` when inventory reaches `0`, and add stub-view JUnit tests for `TicketingController`. — **Owner:** `Sebastian Pacheco`
+2. **Implement Merch Pre-Order Stretch Goal(If we have time):** Add optional concert merchandise bundle selection during checkout (`FanTicketRequest` / `TicketingModel`) and display merch items on the receipt. — **Owner:** `Rafik Khismatov`
+3. **Trigger Automated Sold-Out Broadcast & Controller Tests(If we have time):** Invoke `view.showSoldOut(model.getQueueSize())` automatically in `TicketingController` when inventory reaches `0`, and add stub-view JUnit tests for `TicketingController`. — **Owner:** `Sebastian Pacheco`
 4. **Final End-to-End Integration, JavaDoc & Demo Rehearsal:** Verify full-system test coverage, clean repository state, and timed presentation pacing. — **Owner:** `Francis Kwon`
 
 ### Stretch Goals: Committed vs. Dropped
