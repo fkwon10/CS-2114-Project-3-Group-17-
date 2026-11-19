@@ -17,3 +17,5 @@ public class Main {
         controller.run();
     }
 }
+//seat upgrade -- create seat types for different ticket types and membership implementations, tier would improve odds of upgrades
+//thats a note from the TA about possible extra stretch goals... I can explain better in person
