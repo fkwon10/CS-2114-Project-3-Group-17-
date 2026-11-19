@@ -329,4 +329,142 @@ public class TicketingModelTest {
         assertEquals("John", updated.getFrontCustomerName());
         assertEquals(1, updated.getQueueLength());
     }
+
+    @Test
+    public void testStatusSnapshotShowsActiveCustomer() {
+        model.enqueueFan("John", 2);
+        model.enqueueFan("Jane", 1);
+        model.stepQueue();
+
+        QueueStatusDTO status = model.getStatusSnapshot();
+        assertEquals("John", status.getFrontCustomerName());
+        assertEquals(1, status.getQueueLength());
+    }
+
+    @Test
+    public void testConstructor() {
+        // Normal: zero inventory is allowed
+        TicketingModel empty = new TicketingModel(0);
+        assertEquals(0, empty.getTicketsRemaining());
+        assertEquals(0, empty.getQueueSize());
+        assertNull(empty.getActiveRequest());
+
+        // Bad input: negative inventory
+        IllegalArgumentException e = null;
+        try {
+            new TicketingModel(-1);
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+    }
+
+    @Test
+    public void testConfirmPartialPurchaseBadInput() {
+        IllegalStateException stateEx = null;
+
+        // No active customer
+        try {
+            model.confirmPartialPurchase(1);
+        } catch (IllegalStateException s) {
+            stateEx = s;
+        }
+        assertNotNull(stateEx);
+
+        model = new TicketingModel(2);
+        model.enqueueFan("John", 4);
+        model.stepQueue();
+
+        IllegalArgumentException e = null;
+
+        // Zero tickets
+        try {
+            model.confirmPartialPurchase(0);
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+        e = null;
+
+        // Negative tickets
+        try {
+            model.confirmPartialPurchase(-1);
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+        e = null;
+
+        // More than remaining inventory
+        try {
+            model.confirmPartialPurchase(3);
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+
+        // State unchanged after failed attempts
+        assertEquals(2, model.getTicketsRemaining());
+        assertNotNull(model.getActiveRequest());
+        assertEquals("John", model.getActiveRequest().getCustomerName());
+    }
+
+    @Test
+    public void testGetCustomerTier() {
+        // Normal: lookup trims the name
+        model.enqueueFan("John", 5, "SILVER");
+        assertEquals("SILVER", model.getCustomerTier("John"));
+        assertEquals("SILVER", model.getCustomerTier("  John  "));
+
+        // Bad input: null name and unknown name
+        assertNull(model.getCustomerTier(null));
+        assertNull(model.getCustomerTier("Nobody"));
+    }
+
+    @Test
+    public void testEnqueueFanInvalidNameFormat() {
+        IllegalArgumentException e = null;
+
+        // Too short
+        try {
+            model.enqueueFan("J", 1);
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+        e = null;
+
+        // Illegal characters
+        try {
+            model.enqueueFan("bad name!", 1);
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+        e = null;
+
+        // Too long (21 characters)
+        try {
+            model.enqueueFan("abcdefghijklmnopqrstu", 1);
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+        assertEquals(0, model.getQueueSize());
+    }
+
+    @Test
+    public void testGoldNoFastTrackWhenOthersWaiting() {
+        // Someone already in line: GOLD must wait in the queue
+        model.enqueueFan("ClassicFan", 1);
+        model.enqueueFan("GoldFan", 8, "GOLD");
+        assertNull(model.getActiveRequest());
+        assertEquals(2, model.getQueueSize());
+        assertEquals("ClassicFan", model.stepQueue().getCustomerName());
+
+        // Window busy: GOLD must wait in the queue
+        model.enqueueFan("GoldFan2", 1, "GOLD");
+        assertEquals("ClassicFan", model.getActiveRequest().getCustomerName());
+        assertEquals(2, model.getQueueSize());
+    }
 }
