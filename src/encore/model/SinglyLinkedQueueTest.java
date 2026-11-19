@@ -51,6 +51,24 @@ public class SinglyLinkedQueueTest {
     }
 
     @Test
+    public void testInterleavedEnqueueDequeueOrder() {
+        queue.enqueue("Fan1");
+        queue.enqueue("Fan2");
+        assertEquals("Fan1", queue.dequeue());
+
+        queue.enqueue("Fan3");
+        queue.enqueue("Fan4");
+        assertEquals("Fan2", queue.dequeue());
+        assertEquals("Fan3", queue.dequeue());
+
+        queue.enqueue("Fan5");
+        assertEquals("Fan4", queue.dequeue());
+        assertEquals("Fan5", queue.dequeue());
+        assertTrue(queue.isEmpty());
+        assertEquals(0, queue.size());
+    }
+
+    @Test
     public void testPeek() {
         NoSuchElementException e = null;
         try {

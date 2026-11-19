@@ -1,43 +1,20 @@
 package encore.view;
 
+import encore.model.QueueStatusDTO;
 import java.io.PrintStream;
 import java.util.Scanner;
-import encore.model.QueueStatusDTO;
 
 public class ConsoleQueueView implements QueueView {
-    private final Scanner in;
+    private final Scanner scanner;
     private final PrintStream out;
 
     public ConsoleQueueView() {
         this(new Scanner(System.in), System.out);
     }
 
-    public ConsoleQueueView(Scanner in, PrintStream out) {
-        if (in == null || out == null) {
-            throw new IllegalArgumentException(
-                "Input and output cannot be null.");
-        }
-        this.in = in;
+    public ConsoleQueueView(Scanner scanner, PrintStream out) {
+        this.scanner = scanner;
         this.out = out;
-    }
-
-    @Override
-    public void update(QueueStatusDTO status) {
-        showStatus(status);
-    }
-
-    @Override
-    public void showError(String message) {
-        out.println("Error: " + message);
-    }
-
-    public void showStatus(QueueStatusDTO status) {
-        out.println("\n--- Encore Queue Status ---");
-        out.println("Fans waiting: " + status.getQueueLength());
-        out.println("Next fan: " + (status.getFrontCustomerName() == null
-            ? "None" : status.getFrontCustomerName()));
-        out.println("Position: " + status.getPosition());
-        out.println("Tickets remaining: " + status.getTicketsRemaining());
     }
 
     @Override
@@ -58,58 +35,53 @@ public class ConsoleQueueView implements QueueView {
 
     @Override
     public String promptCustomerName() {
-        out.print("Customer name: ");
-        return in.nextLine();
+        out.print("Enter customer name: ");
+        return scanner.nextLine().trim();
+    }
+
+    @Override
+    public String promptMembershipTier() {
+        out.print("Membership tier (GOLD / SILVER / CLASSIC): ");
+        return scanner.nextLine().trim();
     }
 
     @Override
     public int promptTicketQuantity() {
-        return readInt("Tickets requested (1-4): ");
+        return readInt("Enter ticket quantity: ");
     }
 
     @Override
-    public void showJoinConfirmation(String customerName, int position) {
-        out.println(customerName + " joined the line at position #" + position + ".");
+    public boolean promptPartialStockDecision(String customerName, int requested, int available) {
+        out.println(customerName + " requested " + requested + " ticket(s), but only "
+            + available + " remain.");
+        out.print("Accept partial stock of " + available + " ticket(s)? (Y/N): ");
+        String response = scanner.nextLine().trim().toUpperCase();
+        return response.equals("Y") || response.equals("YES");
     }
 
     @Override
-    public void showActiveCheckout(String customerName, int quantity) {
-        out.println("\n[Checkout Window] " + customerName
-            + " is now up to purchase " + quantity + " ticket(s).");
-    }
-
-    @Override
-    public boolean promptCheckoutDecision() {
-        out.print("Confirm purchase? (Y/N): ");
-        String response = in.nextLine().trim();
-        return response.equalsIgnoreCase("Y") || response.equalsIgnoreCase("YES");
-    }
-
-    @Override
-    public boolean promptAcceptPartial(int requested, int available) {
-        out.print("Requested " + requested + " tickets, but only " + available
-            + " remain. Accept partial stock? (Y/N): ");
-        String response = in.nextLine().trim();
-        return response.equalsIgnoreCase("Y") || response.equalsIgnoreCase("YES");
-    }
-
-    @Override
-    public void showReceipt(String customerName, int quantity, int ticketsRemaining) {
-        out.println("\n--- Encore Receipt ---");
+    public void showReceipt(String customerName, int quantityPurchased, int remainingTickets) {
+        out.println("\n--- Purchase Receipt ---");
         out.println("Customer: " + customerName);
-        out.println("Tickets purchased: " + quantity);
-        out.println("Tickets remaining: " + ticketsRemaining);
-        out.println("Purchase confirmed.");
-    }
-
-    @Override
-    public void showCancellation(String customerName) {
-        out.println(customerName + "'s transaction was canceled. Checkout window is now free.");
+        out.println("Tickets Purchased: " + quantityPurchased);
+        out.println("Tickets Remaining: " + remainingTickets);
+        out.println("------------------------");
     }
 
     @Override
     public void showSoldOut(int fansStillWaiting) {
-        out.println("SOLD OUT! No tickets remain (" + fansStillWaiting + " fan(s) still waiting).");
+        out.println("\n*** EVENT SOLD OUT ***");
+        out.println("Fans still waiting in queue: " + fansStillWaiting);
+    }
+
+    @Override
+    public void showStatus(QueueStatusDTO status) {
+        out.println("\n--- Encore Queue Status ---");
+        out.println("Front / Active Customer: " + status.getFrontCustomerName());
+        out.println("Position: " + status.getPosition());
+        out.println("Fans Waiting in Queue: " + status.getQueueLength());
+        out.println("Tickets Remaining: " + status.getTicketsRemaining());
+        out.println("---------------------------");
     }
 
     @Override
@@ -117,14 +89,24 @@ public class ConsoleQueueView implements QueueView {
         out.println(message);
     }
 
-    public int readInt(String prompt) {
+    @Override
+    public void update(QueueStatusDTO status) {
+        showStatus(status);
+    }
+
+    @Override
+    public void showError(String message) {
+        out.println("Error: " + message);
+    }
+
+    private int readInt(String prompt) {
         while (true) {
             out.print(prompt);
-            String line = in.nextLine().trim();
+            String input = scanner.nextLine().trim();
             try {
-                return Integer.parseInt(line);
+                return Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                out.println("Please enter a valid whole number.");
+                out.println("Error: Please enter a valid integer.");
             }
         }
     }

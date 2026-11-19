@@ -40,9 +40,9 @@ public final class FanTicketRequest {
             throw new IllegalArgumentException(
                 "Customer name cannot be blank.");
         }
-        if (quantity < 1 || quantity > 4) {
+        if (quantity < 1 || quantity > 8) {
             throw new IllegalArgumentException(
-                "Quantity must be between 1 and 4.");
+                "Quantity must be between 1 and 8.");
         }
         this.customerName = customerName.trim();
         this.quantity = quantity;

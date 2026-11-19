@@ -57,6 +57,7 @@ public class TicketingModelTest {
     public void testEnqueueFanValid() {
         model.enqueueFan("John", 2);
         assertEquals(1, model.getQueueSize());
+        assertEquals("CLASSIC", model.getCustomerTier("John"));
 
         FanTicketRequest request = model.stepQueue();
         assertEquals("John", request.getCustomerName());
@@ -94,7 +95,7 @@ public class TicketingModelTest {
         assertNotNull(e);
         e = null;
 
-        // Quantity too high
+        // Quantity too high for default CLASSIC
         try {
             model.enqueueFan("John", 5);
         } catch (IllegalArgumentException s) {
@@ -117,6 +118,93 @@ public class TicketingModelTest {
         // Verify valid request was added
         FanTicketRequest request = model.stepQueue();
         assertEquals("John", request.getCustomerName());
+    }
+
+    @Test
+    public void testMembershipTiersNormalPerks() {
+        assertEquals(4, model.getMaxTicketsForTier("CLASSIC"));
+        assertEquals(6, model.getMaxTicketsForTier("SILVER"));
+        assertEquals(8, model.getMaxTicketsForTier("GOLD"));
+
+        // GOLD perk: up to 8 tickets + instant fast-track to checkout when empty
+        model.enqueueFan("VipFan", 8, "gold");
+        assertEquals("GOLD", model.getCustomerTier("VipFan"));
+        assertNotNull(model.getActiveRequest());
+        assertEquals("VipFan", model.getActiveRequest().getCustomerName());
+        assertEquals(0, model.getQueueSize());
+        model.confirmPurchase();
+        assertEquals(2, model.getTicketsRemaining());
+        assertNull(model.getCustomerTier("VipFan"));
+
+        // SILVER perk: up to 6 tickets, joins queue normally
+        model.enqueueFan("SilverFan", 6, "SILVER");
+        assertEquals("SILVER", model.getCustomerTier("SilverFan"));
+        assertEquals(1, model.getQueueSize());
+        assertNull(model.getActiveRequest());
+
+        // CLASSIC perk: up to 4 tickets
+        model.enqueueFan("ClassicFan", 4, "Classic");
+        assertEquals("CLASSIC", model.getCustomerTier("ClassicFan"));
+        assertEquals(2, model.getQueueSize());
+    }
+
+    @Test
+    public void testMembershipTiersBadInput() {
+        IllegalArgumentException e = null;
+
+        // Null tier
+        try {
+            model.getMaxTicketsForTier(null);
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+        e = null;
+
+        // Blank tier
+        try {
+            model.enqueueFan("John", 2, "   ");
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+        e = null;
+
+        // Unknown tier name
+        try {
+            model.enqueueFan("John", 2, "PLATINUM");
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+        e = null;
+
+        // CLASSIC exceeding 4 tickets
+        try {
+            model.enqueueFan("John", 5, "CLASSIC");
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+        e = null;
+
+        // SILVER exceeding 6 tickets
+        try {
+            model.enqueueFan("John", 7, "SILVER");
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+        e = null;
+
+        // GOLD exceeding 8 tickets
+        try {
+            model.enqueueFan("John", 9, "GOLD");
+        } catch (IllegalArgumentException s) {
+            e = s;
+        }
+        assertNotNull(e);
+        assertEquals(0, model.getQueueSize());
     }
 
     @Test

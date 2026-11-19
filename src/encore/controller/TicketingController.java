@@ -21,101 +21,109 @@ public class TicketingController {
         while (running) {
             view.showMenu();
             int choice = view.readMenuChoice();
+
             switch (choice) {
                 case 1:
-                    onJoinRequested(
-                        view.promptCustomerName(),
-                        view.promptTicketQuantity());
+                    String name = view.promptCustomerName();
+                    String tier = view.promptMembershipTier();
+                    int quantity = view.promptTicketQuantity();
+                    onJoinQueue(name, quantity, tier);
                     break;
                 case 2:
-                    onStepLineRequested();
+                    onAdvanceQueue();
                     break;
                 case 3:
-                    onCheckoutConfirmed();
+                    onConfirmPurchase();
                     break;
                 case 4:
-                    onCheckoutDeclined();
+                    onDeclinePurchase();
                     break;
                 case 5:
                     view.showStatus(model.getStatusSnapshot());
                     break;
                 case 0:
-                    running = false;
                     view.showMessage("Goodbye!");
+                    running = false;
                     break;
                 default:
-                    view.showError("Invalid menu option.");
+                    view.showError("Invalid menu option. Please choose 0-5.");
                     break;
             }
         }
     }
 
-    public void onJoinRequested(String customerName, int quantity) {
+    public void onJoinQueue(String name, int quantity, String tier) {
         try {
-            model.enqueueFan(customerName, quantity);
-            view.showMessage("Successfully joined the queue.");
+            model.enqueueFan(name, quantity, tier);
+            String cleanName = name.trim();
+            String normalizedTier = model.getCustomerTier(cleanName);
+            if ("GOLD".equals(normalizedTier)
+                && model.getActiveRequest() != null
+                && model.getActiveRequest().getCustomerName().equals(cleanName)) {
+                view.showMessage(cleanName + " [GOLD VIP] fast-tracked directly to checkout for "
+                    + quantity + " ticket(s)!");
+            } else {
+                view.showMessage(cleanName + " [" + normalizedTier + "] joined the queue for "
+                    + quantity + " ticket(s).");
+            }
         } catch (IllegalArgumentException e) {
             view.showError(e.getMessage());
         }
     }
 
-    public void onStepLineRequested() {
+    public void onAdvanceQueue() {
         try {
             FanTicketRequest active = model.stepQueue();
-            view.showActiveCheckout(
-                active.getCustomerName(), active.getQuantity());
+            String tier = model.getCustomerTier(active.getCustomerName());
+            view.showMessage("Now serving: " + active.getCustomerName()
+                + " [" + tier + "] (" + active.getQuantity() + " ticket(s) requested).");
         } catch (IllegalStateException e) {
             view.showError(e.getMessage());
         }
     }
 
-    public void onCheckoutConfirmed() {
+    public void onConfirmPurchase() {
         FanTicketRequest active = model.getActiveRequest();
         if (active == null) {
-            view.showError("No one is checking out.");
+            view.showError("No customer is currently checking out.");
             return;
         }
 
-        int remaining = model.getTicketsRemaining();
-        if (active.getQuantity() > remaining) {
-            if (remaining == 0) {
-                model.cancelActiveTransaction();
-                view.showError("Sold out! Transaction canceled.");
-                return;
-            }
-            if (view.promptAcceptPartial(active.getQuantity(), remaining)) {
-                model.confirmPartialPurchase(remaining);
-                view.showReceipt(
-                    active.getCustomerName(),
-                    remaining,
-                    model.getTicketsRemaining());
-            } else {
-                model.cancelActiveTransaction();
-                view.showCancellation(active.getCustomerName());
-            }
+        int requested = active.getQuantity();
+        int available = model.getTicketsRemaining();
+
+        if (available == 0) {
+            view.showSoldOut(model.getQueueSize());
+            model.cancelActiveTransaction();
             return;
         }
 
         try {
-            model.confirmPurchase();
-            view.showReceipt(
-                active.getCustomerName(),
-                active.getQuantity(),
-                model.getTicketsRemaining());
-        } catch (IllegalStateException e) {
+            if (requested <= available) {
+                model.confirmPurchase();
+                view.showReceipt(active.getCustomerName(), requested, model.getTicketsRemaining());
+            } else {
+                boolean acceptPartial = view.promptPartialStockDecision(
+                    active.getCustomerName(), requested, available);
+                if (acceptPartial) {
+                    model.confirmPartialPurchase(available);
+                    view.showReceipt(active.getCustomerName(), available, model.getTicketsRemaining());
+                } else {
+                    model.cancelActiveTransaction();
+                    view.showMessage("Partial order declined. Transaction cancelled.");
+                }
+            }
+        } catch (IllegalStateException | IllegalArgumentException e) {
             view.showError(e.getMessage());
         }
     }
 
-    public void onCheckoutDeclined() {
-        FanTicketRequest active = model.getActiveRequest();
+    public void onDeclinePurchase() {
         try {
+            FanTicketRequest active = model.getActiveRequest();
+            String name = (active != null) ? active.getCustomerName() : "Customer";
             model.cancelActiveTransaction();
-            if (active != null) {
-                view.showCancellation(active.getCustomerName());
-            } else {
-                view.showMessage("Checkout canceled.");
-            }
+            view.showMessage("Transaction cancelled for " + name + ".");
         } catch (IllegalStateException e) {
             view.showError(e.getMessage());
         }

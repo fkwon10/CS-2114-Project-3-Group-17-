@@ -2,13 +2,16 @@ package encore.model;
 
 import encore.view.QueueObserver;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class TicketingModel {
     private final SinglyLinkedQueue<FanTicketRequest> ticketQueue;
     private final Set<String> namesInLine;
+    private final Map<String, String> customerTiers;
     private final List<QueueObserver> observers;
     private int ticketsRemaining;
     private FanTicketRequest activeRequest;
@@ -19,6 +22,7 @@ public class TicketingModel {
         }
         this.ticketQueue = new SinglyLinkedQueue<>();
         this.namesInLine = new HashSet<>();
+        this.customerTiers = new HashMap<>();
         this.observers = new ArrayList<>();
         this.ticketsRemaining = initialInventory;
         this.activeRequest = null;
@@ -38,7 +42,44 @@ public class TicketingModel {
         }
     }
 
+    /**
+     * Returns the maximum tickets allowed per order for a valid membership tier:
+     * CLASSIC -> 4, SILVER -> 6, GOLD -> 8.
+     */
+    public int getMaxTicketsForTier(String membershipTier) {
+        if (membershipTier == null || membershipTier.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                "Membership tier cannot be blank (choose GOLD, SILVER, or CLASSIC).");
+        }
+        String normalized = membershipTier.trim().toUpperCase();
+        switch (normalized) {
+            case "CLASSIC":
+                return 4;
+            case "SILVER":
+                return 6;
+            case "GOLD":
+                return 8;
+            default:
+                throw new IllegalArgumentException(
+                    "Invalid membership tier: " + membershipTier + ". Must be GOLD, SILVER, or CLASSIC.");
+        }
+    }
+
+    /**
+     * Backward-compatible enqueue defaulting to CLASSIC tier (1-4 tickets).
+     */
     public void enqueueFan(String customerName, int quantity) {
+        enqueueFan(customerName, quantity, "CLASSIC");
+    }
+
+    /**
+     * Enqueues a fan with a specific membership tier (GOLD, SILVER, or CLASSIC).
+     * Perks:
+     * - CLASSIC: up to 4 tickets
+     * - SILVER: up to 6 tickets
+     * - GOLD: up to 8 tickets + instant fast-track to checkout when window is free and queue is empty
+     */
+    public void enqueueFan(String customerName, int quantity, String membershipTier) {
         if (customerName == null || customerName.trim().isEmpty()) {
             throw new IllegalArgumentException("Customer name cannot be blank.");
         }
@@ -49,14 +90,33 @@ public class TicketingModel {
         if (namesInLine.contains(cleanName)) {
             throw new IllegalArgumentException("Error: User already waiting in queue.");
         }
-        if (quantity < 1 || quantity > 4) {
-            throw new IllegalArgumentException("Order quantity must be between 1 and 4 tickets.");
+
+        int maxAllowed = getMaxTicketsForTier(membershipTier);
+        String normalizedTier = membershipTier.trim().toUpperCase();
+
+        if (quantity < 1 || quantity > maxAllowed) {
+            throw new IllegalArgumentException(
+                normalizedTier + " tier order quantity must be between 1 and " + maxAllowed + " tickets.");
         }
 
         FanTicketRequest request = new FanTicketRequest(cleanName, quantity);
-        ticketQueue.enqueue(request);
         namesInLine.add(cleanName);
+        customerTiers.put(cleanName, normalizedTier);
+
+        // GOLD Perk: Instant VIP Fast-Track directly to checkout if window is open and queue is empty
+        if ("GOLD".equals(normalizedTier) && activeRequest == null && ticketQueue.isEmpty()) {
+            activeRequest = request;
+        } else {
+            ticketQueue.enqueue(request);
+        }
         notifyObservers();
+    }
+
+    public String getCustomerTier(String customerName) {
+        if (customerName == null) {
+            return null;
+        }
+        return customerTiers.get(customerName.trim());
     }
 
     public FanTicketRequest stepQueue() {
@@ -79,7 +139,9 @@ public class TicketingModel {
             throw new IllegalStateException("Not enough remaining tickets.");
         }
         ticketsRemaining -= activeRequest.getQuantity();
-        namesInLine.remove(activeRequest.getCustomerName());
+        String completedName = activeRequest.getCustomerName();
+        namesInLine.remove(completedName);
+        customerTiers.remove(completedName);
         activeRequest = null;
         notifyObservers();
     }
@@ -92,7 +154,9 @@ public class TicketingModel {
             throw new IllegalArgumentException("Invalid partial ticket quantity.");
         }
         ticketsRemaining -= agreedQuantity;
-        namesInLine.remove(activeRequest.getCustomerName());
+        String completedName = activeRequest.getCustomerName();
+        namesInLine.remove(completedName);
+        customerTiers.remove(completedName);
         activeRequest = null;
         notifyObservers();
     }
@@ -101,7 +165,9 @@ public class TicketingModel {
         if (activeRequest == null) {
             throw new IllegalStateException("No one is checking out.");
         }
-        namesInLine.remove(activeRequest.getCustomerName());
+        String cancelledName = activeRequest.getCustomerName();
+        namesInLine.remove(cancelledName);
+        customerTiers.remove(cancelledName);
         activeRequest = null;
         notifyObservers();
     }
@@ -112,10 +178,10 @@ public class TicketingModel {
 
         if (activeRequest != null) {
             frontName = activeRequest.getCustomerName();
-            position = 0; // Currently at checkout window
+            position = 0;
         } else if (!ticketQueue.isEmpty()) {
             frontName = ticketQueue.peek().getCustomerName();
-            position = 1; // Next in line
+            position = 1;
         }
 
         return new QueueStatusDTO(frontName, position, ticketQueue.size(), ticketsRemaining);
